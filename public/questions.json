@@ -1,0 +1,102 @@
+[
+    {
+        "id": 1,
+        "question": "What is React?",
+        "choices": [
+            "A database",
+            "A JavaScript library for building user interfaces",
+            "A backend framework",
+            "A programming language"
+        ],
+        "answer": "A JavaScript library for building user interfaces"
+    },
+    {
+        "id": 2,
+        "question": "What is JSX?",
+        "choices": [
+            "A database query language",
+            "A syntax extension for JavaScript",
+            "A CSS framework",
+            "A browser API"
+        ],
+        "answer": "A syntax extension for JavaScript"
+    },
+    {
+        "id": 3,
+        "question": "Which hook is used to manage state in a functional component?",
+        "choices": ["useEffect", "useState", "useContext", "useRef"],
+        "answer": "useState"
+    },
+    {
+        "id": 4,
+        "question": "What does useEffect do?",
+        "choices": [
+            "Manages component styling",
+            "Handles side effects in components",
+            "Creates components",
+            "Stores global state"
+        ],
+        "answer": "Handles side effects in components"
+    },
+    {
+        "id": 5,
+        "question": "What is a component in React?",
+        "choices": [
+            "A reusable piece of UI",
+            "A database table",
+            "A server",
+            "A CSS file"
+        ],
+        "answer": "A reusable piece of UI"
+    },
+    {
+        "id": 6,
+        "question": "What is the virtual DOM?",
+        "choices": [
+            "A real browser DOM",
+            "A copy of the real DOM used for optimization",
+            "A database",
+            "A CSS structure"
+        ],
+        "answer": "A copy of the real DOM used for optimization"
+    },
+    {
+        "id": 7,
+        "question": "How do you pass data from parent to child component?",
+        "choices": [
+            "Using state",
+            "Using props",
+            "Using hooks",
+            "Using events"
+        ],
+        "answer": "Using props"
+    },
+    {
+        "id": 8,
+        "question": "Which hook is used for referencing DOM elements?",
+        "choices": ["useState", "useEffect", "useRef", "useMemo"],
+        "answer": "useRef"
+    },
+    {
+        "id": 9,
+        "question": "What is a key in React lists?",
+        "choices": [
+            "A CSS property",
+            "A unique identifier for elements",
+            "A function",
+            "A hook"
+        ],
+        "answer": "A unique identifier for elements"
+    },
+    {
+        "id": 10,
+        "question": "What is the purpose of useContext?",
+        "choices": [
+            "To manage local state",
+            "To handle side effects",
+            "To share data globally without props drilling",
+            "To style components"
+        ],
+        "answer": "To share data globally without props drilling"
+    }
+]
