@@ -1,27 +1,10 @@
-export default function Restart({
-  score,
-  questions,
-  setCurrentQuestion,
-  setSelectedAnswers,
-  setScore,
-  setShowScore,
-}) {
+export default function Restart({ score, questions, onRestart }) {
   return (
-    <div>
-      <h2>
-        Your Score: {score} / {questions.length}
-      </h2>
-      <button
-        onClick={() => {
-          setCurrentQuestion(0);
-          setSelectedAnswers({});
-          setScore(0);
-          setShowScore(false);
-          localStorage.removeItem("ANSWERS");
-          localStorage.removeItem("SCORE");
-          localStorage.removeItem("CURRENT_QUESTION");
-        }}
-      >
+    <div className="score-screen">
+      <p className="score-label">Your score</p>
+      <p className="score-value">{score}</p>
+      <p className="score-total">out of {questions.length}</p>
+      <button className="primary" onClick={onRestart}>
         Restart Quiz
       </button>
     </div>
