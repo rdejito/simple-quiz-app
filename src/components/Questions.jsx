@@ -1,60 +1,99 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import Choices from "./Choices";
+import Error from "./Error";
+import Restart from "./Restart";
 
 export default function Questions({ questions }) {
-    const [selectedAnswers, setSelectedAnswers] = useState({});
-    const [score, setScore] = useState(null);
+  const [currentQuestion, setCurrentQuestion] = useState(() => {
+    const saved = localStorage.getItem("CURRENT_QUESTION");
+    return saved ? JSON.parse(saved) : 0;
+  });
+  const [showScore, setShowScore] = useState(false);
+  const [score, setScore] = useState(() => {
+    const saved = localStorage.getItem("SCORE");
+    return saved ? JSON.parse(saved) : 0;
+  });
+  const [error, setError] = useState("");
+  const [selectedAnswers, setSelectedAnswers] = useState(() => {
+    const saved = localStorage.getItem("ANSWERS");
+    return saved ? JSON.parse(saved) : {};
+  });
 
-    const handleChange = (questionId, choice) => {
-        setSelectedAnswers((prev) => ({
-            ...prev,
-            [questionId]: choice,
-        }));
-    };
+  useEffect(() => {
+    localStorage.setItem("ANSWERS", JSON.stringify(selectedAnswers));
+    localStorage.setItem("SCORE", JSON.stringify(score));
+    localStorage.setItem("CURRENT_QUESTION", JSON.stringify(currentQuestion));
+  }, [selectedAnswers, score, currentQuestion]);
 
-    const handleSubmit = () => {
-        let newScore = 0;
-        questions.forEach((q) => {
-            if (selectedAnswers[q.id] === q.answer) {
-                newScore += 1;
-            }
-        });
-        setScore(newScore);
-    };
+  const handleSubmit = () => {
+    let newScore = 0;
+    questions.forEach((item) => {
+      if (selectedAnswers[item.id] === item.answer) newScore += 1;
+    });
 
+    setScore(newScore);
+    return true;
+  };
+
+  if (!questions || questions.length === 0) return null;
+
+  const question = questions[currentQuestion];
+
+  const handleChange = (choice) => {
+    setSelectedAnswers((prev) => ({
+      ...prev,
+      [question.id]: choice,
+    }));
+    setError("");
+  };
+
+  const handleNext = () => {
+    if (!selectedAnswers[question.id]) {
+      setError("Please select an answer before proceeding!");
+      return;
+    }
+
+    setError("");
+
+    if (currentQuestion + 1 < questions.length) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      const isValid = handleSubmit();
+      if (isValid) setShowScore(true);
+    }
+  };
+
+  if (showScore) {
     return (
-        <div>
-            {questions.map((item) => (
-                <div key={item.id} style={{ marginBottom: "20px" }}>
-                    <p>
-                        <strong>{item.question}</strong>
-                    </p>
-                    {item.choices.map((choice, index) => (
-                        <label
-                            key={index}
-                            style={{ display: "block", cursor: "pointer" }}
-                        >
-                            <input
-                                type="radio"
-                                name={`question-${item.id}`}
-                                value={choice}
-                                checked={selectedAnswers[item.id] === choice}
-                                onChange={() => handleChange(item.id, choice)}
-                            />{" "}
-                            {choice}
-                        </label>
-                    ))}
-                </div>
-            ))}
-
-            <button onClick={handleSubmit}>Submit Quiz</button>
-
-            {score !== null && (
-                <div style={{ marginTop: "20px" }}>
-                    <h2>
-                        Your Score: {score} / {questions.length}
-                    </h2>
-                </div>
-            )}
-        </div>
+      <Restart
+        score={score}
+        questions={questions}
+        setCurrentQuestion={setCurrentQuestion}
+        setSelectedAnswers={setSelectedAnswers}
+        setScore={setScore}
+        setShowScore={setShowScore}
+      />
     );
+  }
+
+  return (
+    <div>
+      <p style={{ marginBottom: "20px", fontSize: "24px" }}>
+        <strong>Question {currentQuestion + 1}:</strong> {question.question}
+      </p>
+
+      <Choices
+        questionId={question.id}
+        choices={question.choices}
+        selectedAnswer={selectedAnswers[question.id]}
+        onSelect={(choice) => handleChange(choice)}
+      />
+
+      {error && <Error error={error} />}
+
+      <button onClick={handleNext} style={{ marginTop: "10px" }}>
+        {currentQuestion + 1 === questions.length ? "Submit" : "Next"}
+      </button>
+    </div>
+  );
 }
