@@ -4,6 +4,4 @@ A simple quiz app made with React + Vite.
 The quiz for now is all about React .
 
 # Note:
-
-Maybe in the next update I'll add more quiz topics
-related to techs or the likes.
+It is a "simple" app so.. simple
