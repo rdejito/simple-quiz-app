@@ -38,15 +38,17 @@ export default function Questions({ questions }) {
     const saved = localStorage.getItem("CURRENT_QUESTION");
     return saved ? JSON.parse(saved) : 0;
   });
-  // ✅ Read showScore from localStorage on mount
+
   const [showScore, setShowScore] = useState(() => {
     const saved = localStorage.getItem("SHOW_SCORE");
     return saved ? JSON.parse(saved) : false;
   });
+
   const [score, setScore] = useState(() => {
     const saved = localStorage.getItem("SCORE");
     return saved ? JSON.parse(saved) : 0;
   });
+  
   const [error, setError] = useState("");
   const [selectedAnswers, setSelectedAnswers] = useState(() => {
     const saved = localStorage.getItem("ANSWERS");
@@ -78,7 +80,6 @@ export default function Questions({ questions }) {
     );
   }, [activeQuestions]);
 
-  // ✅ Added showScore to persistence effect and dependency array
   useEffect(() => {
     localStorage.setItem("ANSWERS", JSON.stringify(selectedAnswers));
     localStorage.setItem("SCORE", JSON.stringify(score));
@@ -97,7 +98,7 @@ export default function Questions({ questions }) {
     localStorage.removeItem("SCORE");
     localStorage.removeItem("CURRENT_QUESTION");
     localStorage.removeItem("ACTIVE_QUESTION_IDS");
-    localStorage.removeItem("SHOW_SCORE"); // ✅ Clear on restart
+    localStorage.removeItem("SHOW_SCORE"); 
   }, [questions]);
 
   const handleSubmit = () => {
