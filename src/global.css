@@ -358,3 +358,23 @@ button.primary:hover {
   color: var(--success);
   margin-top: 2px;
 }
+.timer {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.timer-value {
+  font-family: "Space Mono", monospace;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.timer-label {
+  font-family: "Space Mono", monospace;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}

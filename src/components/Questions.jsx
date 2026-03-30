@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import Choices from "./Choices";
 import Error from "./Error";
 import Restart from "./Restart";
+import Timer from "./TImer";
 
 const QUIZ_SIZE = 15;
 
@@ -33,22 +34,20 @@ function saveAttemptToHistory({
 }
 
 export default function Questions({ questions }) {
+  const [quizStarted, setQuizStarted] = useState(false);
   const [activeQuestions, setActiveQuestions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(() => {
     const saved = localStorage.getItem("CURRENT_QUESTION");
     return saved ? JSON.parse(saved) : 0;
   });
-
   const [showScore, setShowScore] = useState(() => {
     const saved = localStorage.getItem("SHOW_SCORE");
     return saved ? JSON.parse(saved) : false;
   });
-
   const [score, setScore] = useState(() => {
     const saved = localStorage.getItem("SCORE");
     return saved ? JSON.parse(saved) : 0;
   });
-  
   const [error, setError] = useState("");
   const [selectedAnswers, setSelectedAnswers] = useState(() => {
     const saved = localStorage.getItem("ANSWERS");
@@ -94,14 +93,15 @@ export default function Questions({ questions }) {
     setSelectedAnswers({});
     setScore(0);
     setShowScore(false);
+    setQuizStarted(false);
     localStorage.removeItem("ANSWERS");
     localStorage.removeItem("SCORE");
     localStorage.removeItem("CURRENT_QUESTION");
     localStorage.removeItem("ACTIVE_QUESTION_IDS");
-    localStorage.removeItem("SHOW_SCORE"); 
+    localStorage.removeItem("SHOW_SCORE");
   }, [questions]);
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     let newScore = 0;
     activeQuestions.forEach((item) => {
       if (selectedAnswers[item.id] === item.answer) newScore += 1;
@@ -113,12 +113,13 @@ export default function Questions({ questions }) {
       activeQuestions,
     });
     setScore(newScore);
-    return true;
-  };
+    setShowScore(true);
+  }, [activeQuestions, selectedAnswers]);
 
   if (!activeQuestions || activeQuestions.length === 0) return null;
 
   const question = activeQuestions[currentQuestion];
+  const isLastQuestion = currentQuestion + 1 === activeQuestions.length;
 
   const handleChange = (choice) => {
     setSelectedAnswers((prev) => ({ ...prev, [question.id]: choice }));
@@ -131,11 +132,10 @@ export default function Questions({ questions }) {
       return;
     }
     setError("");
-    if (currentQuestion + 1 < activeQuestions.length) {
+    if (!isLastQuestion) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
-      const isValid = handleSubmit();
-      if (isValid) setShowScore(true);
+      handleSubmit();
     }
   };
 
@@ -154,6 +154,22 @@ export default function Questions({ questions }) {
     );
   }
 
+  // Start screen — shown before quiz begins
+  if (!quizStarted) {
+    return (
+      <div className="score-screen">
+        <p className="score-label">Ready?</p>
+        <p className="score-total">
+          {activeQuestions.length} questions · 30 seconds each
+        </p>
+        <br />
+        <button className="primary" onClick={() => setQuizStarted(true)}>
+          Start Quiz
+        </button>
+      </div>
+    );
+  }
+
   const progress = ((currentQuestion + 1) / activeQuestions.length) * 100;
 
   return (
@@ -163,9 +179,26 @@ export default function Questions({ questions }) {
       </div>
 
       <div style={{ padding: "32px 0 0" }}>
-        <p className="question-label">
-          Question {currentQuestion + 1} of {activeQuestions.length}
-        </p>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "10px",
+          }}
+        >
+          <p className="question-label">
+            Question {currentQuestion + 1} of {activeQuestions.length}
+          </p>
+          <Timer
+            quizStarted={quizStarted}
+            setCurrentQuestion={setCurrentQuestion}
+            currentQuestion={currentQuestion}
+            isLastQuestion={isLastQuestion}
+            onAutoSubmit={handleSubmit}
+          />
+        </div>
+
         <p className="question-text">{question.question}</p>
 
         <Choices
@@ -182,9 +215,7 @@ export default function Questions({ questions }) {
             <button onClick={handlePrevious}>← Prev</button>
           )}
           <button className="primary" onClick={handleNext}>
-            {currentQuestion + 1 === activeQuestions.length
-              ? "Submit"
-              : "Next →"}
+            {isLastQuestion ? "Submit" : "Next →"}
           </button>
         </div>
       </div>
