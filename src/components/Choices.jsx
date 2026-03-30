@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function Choices({
   questionId,
   choices,
@@ -7,16 +5,11 @@ export default function Choices({
   onSelect,
 }) {
   return (
-    <div>
+    <div className="choices">
       {choices.map((choice, index) => (
         <label
           key={index}
-          style={{
-            display: "block",
-            cursor: "pointer",
-            marginLeft: "10px",
-            marginBottom: "5px",
-          }}
+          className={`choice-label ${selectedAnswer === choice ? "selected" : ""}`}
         >
           <input
             type="radio"
@@ -24,7 +17,6 @@ export default function Choices({
             value={choice}
             checked={selectedAnswer === choice}
             onChange={() => onSelect(choice)}
-            style={{ marginRight: "10px" }}
           />
           {choice}
         </label>
